@@ -408,5 +408,62 @@
       "esente_teorica": 154.94,
       "capienza_plafond": 1200.0
     }
+  },
+  {
+    "id": 23,
+    "dipendente": "Paolo Neri",
+    "data": "2026-06-19",
+    "categoria": "trasferta_italia",
+    "importo": 100.0,
+    "giorni": 3,
+    "km": 1200.0,
+    "notti": 2,
+    "stato": "valida",
+    "motivazione": "",
+    "quota_esente": 100.0,
+    "quota_imponibile": 0.0,
+    "dettaglio": {
+      "massimale_teorico": 139.44,
+      "esente_teorica": 100.0,
+      "capienza_plafond": 1200.0
+    }
+  },
+  {
+    "id": 24,
+    "dipendente": "Test",
+    "data": "2026-01-15",
+    "categoria": "pasto",
+    "importo": 30.0,
+    "giorni": 3,
+    "km": null,
+    "notti": null,
+    "stato": "valida",
+    "motivazione": "",
+    "quota_esente": 30.0,
+    "quota_imponibile": 0.0,
+    "dettaglio": {
+      "massimale_teorico": 30.0,
+      "esente_teorica": 30.0,
+      "capienza_plafond": 1400.0
+    }
+  },
+  {
+    "id": 25,
+    "dipendente": "Test2",
+    "data": "2025-12-18",
+    "categoria": "pasto",
+    "importo": 24.0,
+    "giorni": 3,
+    "km": null,
+    "notti": null,
+    "stato": "valida",
+    "motivazione": "",
+    "quota_esente": 24.0,
+    "quota_imponibile": 0.0,
+    "dettaglio": {
+      "massimale_teorico": 24.0,
+      "esente_teorica": 24.0,
+      "capienza_plafond": 1200.0
+    }
   }
 ]

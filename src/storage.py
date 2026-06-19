@@ -38,3 +38,16 @@ def esente_riconosciuta_nel_mese(richieste, dipendente, mese_riferimento):
         and mese(r) == mese_riferimento
     )
     return round(totale, 2)
+
+
+def giorni_lavoro_agile_nel_mese(richieste, dipendente, mese_riferimento):
+    """Giornate di lavoro agile già ammesse al rimborso per il dipendente nel mese."""
+    return sum(
+        r["dettaglio"]["giorni_ammessi"]
+        for r in richieste
+        if r["dipendente"] == dipendente
+        and r["stato"] == "valida"
+        and r["categoria"] == "lavoro_agile"
+        and mese(r) == mese_riferimento
+        and r.get("dettaglio") and "giorni_ammessi" in r["dettaglio"]
+    )

@@ -2,7 +2,9 @@
 {% block titolo %}Normativa vigente{% endblock %}
 {% block contenuto %}
 <h1>Normativa vigente</h1>
-<p class="nota">Parametri applicati dal sistema. Fonte: {{ rules.RIFERIMENTO_NORMATIVO }}.</p>
+
+<h2>In vigore dal 01/01/2026</h2>
+<p class="nota">Fonte: {{ rules_2026.riferimento }}.</p>
 
 <table class="tabella">
   <thead>
@@ -12,23 +14,58 @@
     </tr>
   </thead>
   <tbody>
-    {% for codice, massimale in rules.MASSIMALI_GIORNALIERI.items() %}
+    {% for codice, massimale in rules_2026.massimali_giornalieri.items() %}
     <tr>
-      <td>{{ rules.CATEGORIE[codice] }}</td>
+      <td>
+        {{ categorie[codice] }}
+        {% if codice == "lavoro_agile" %}<small> (max 12 gg/mese)</small>{% endif %}
+      </td>
       <td class="num">{{ "%.2f"|format(massimale) }} € / giorno</td>
     </tr>
     {% endfor %}
     <tr>
-      <td>{{ rules.CATEGORIE["chilometrico"] }}</td>
-      <td class="num">{{ "%.2f"|format(rules.MASSIMALE_KM) }} € / km</td>
+      <td>{{ categorie["chilometrico"] }}</td>
+      <td class="num">{{ "%.2f"|format(rules_2026.massimale_km) }} € / km</td>
     </tr>
     <tr>
-      <td>{{ rules.CATEGORIE["alloggio"] }}</td>
-      <td class="num">{{ "%.2f"|format(rules.MASSIMALE_NOTTE) }} € / notte</td>
+      <td>{{ categorie["alloggio"] }}</td>
+      <td class="num">{{ "%.2f"|format(rules_2026.massimale_notte) }} € / notte</td>
     </tr>
     <tr class="riga-evidenziata">
       <td><strong>Plafond mensile complessivo per dipendente</strong></td>
-      <td class="num"><strong>{{ "%.2f"|format(rules.PLAFOND_MENSILE) }} € / mese</strong></td>
+      <td class="num"><strong>{{ "%.2f"|format(rules_2026.plafond_mensile) }} € / mese</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Applicati fino al 31/12/2025 (Regime transitorio)</h2>
+<p class="nota">Fonte: {{ rules_2025.riferimento }}.</p>
+
+<table class="tabella">
+  <thead>
+    <tr>
+      <th>Categoria</th>
+      <th class="num">Massimale di esenzione</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for codice, massimale in rules_2025.massimali_giornalieri.items() %}
+    <tr>
+      <td>{{ categorie[codice] }}</td>
+      <td class="num">{{ "%.2f"|format(massimale) }} € / giorno</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td>{{ categorie["chilometrico"] }}</td>
+      <td class="num">{{ "%.2f"|format(rules_2025.massimale_km) }} € / km</td>
+    </tr>
+    <tr>
+      <td>{{ categorie["alloggio"] }}</td>
+      <td class="num">{{ "%.2f"|format(rules_2025.massimale_notte) }} € / notte</td>
+    </tr>
+    <tr class="riga-evidenziata">
+      <td><strong>Plafond mensile complessivo per dipendente</strong></td>
+      <td class="num"><strong>{{ "%.2f"|format(rules_2025.plafond_mensile) }} € / mese</strong></td>
     </tr>
   </tbody>
 </table>

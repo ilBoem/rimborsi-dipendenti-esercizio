@@ -34,12 +34,17 @@ def _registra(form):
         "km": _numero(form.get("km")),
         "notti": _intero(form.get("notti")),
     }
-    ok, motivazione = validator.valida(richiesta)
+    ok, motivazione = validator.valida(richiesta, richieste)
     if ok:
         gia_riconosciuta = storage.esente_riconosciuta_nel_mese(
             richieste, richiesta["dipendente"], storage.mese(richiesta)
         )
-        esente, imponibile, dettaglio = calculator.calcola(richiesta, gia_riconosciuta)
+        giorni_la = 0
+        if richiesta["categoria"] == "lavoro_agile":
+            giorni_la = storage.giorni_lavoro_agile_nel_mese(
+                richieste, richiesta["dipendente"], storage.mese(richiesta)
+            )
+        esente, imponibile, dettaglio = calculator.calcola(richiesta, gia_riconosciuta, giorni_la)
         richiesta.update(
             stato="valida",
             motivazione="",
@@ -110,27 +115,42 @@ def riepilogo():
         gruppo["esente"] = round(gruppo["esente"] + r["quota_esente"], 2)
         gruppo["imponibile"] = round(gruppo["imponibile"] + r["quota_imponibile"], 2)
         gruppo["richieste"] += 1
-    righe = [
-        {
+    righe = []
+    for (mese, dipendente), dati in sorted(gruppi.items(), reverse=True):
+        anno = int(mese[:4])
+        plafond = rules.PLAFOND_MENSILE_2026 if anno >= 2026 else rules.PLAFOND_MENSILE_2025
+        righe.append({
             "mese": mese,
             "dipendente": dipendente,
             "esente": dati["esente"],
             "imponibile": dati["imponibile"],
             "richieste": dati["richieste"],
-            "percentuale_plafond": min(
-                round(dati["esente"] / rules.PLAFOND_MENSILE * 100), 100
-            ),
-        }
-        for (mese, dipendente), dati in sorted(gruppi.items(), reverse=True)
-    ]
-    return render_template(
-        "riepilogo.html", righe=righe, plafond=rules.PLAFOND_MENSILE
-    )
+            "plafond": plafond,
+            "percentuale_plafond": min(round(dati["esente"] / plafond * 100), 100),
+        })
+    return render_template("riepilogo.html", righe=righe)
 
 
 @app.get("/normativa")
 def normativa():
-    return render_template("normativa.html", rules=rules)
+    rules_2026 = {
+        "massimali_giornalieri": {
+            **rules.MASSIMALI_GIORNALIERI_2026,
+            "lavoro_agile": rules.MASSIMALE_LAVORO_AGILE_2026,
+        },
+        "massimale_km": rules.MASSIMALE_KM_2026,
+        "massimale_notte": rules.MASSIMALE_NOTTE_2026,
+        "plafond_mensile": rules.PLAFOND_MENSILE_2026,
+        "riferimento": rules.RIFERIMENTO_NORMATIVO,
+    }
+    rules_2025 = {
+        "massimali_giornalieri": rules.MASSIMALI_GIORNALIERI_2025,
+        "massimale_km": rules.MASSIMALE_KM_2025,
+        "massimale_notte": rules.MASSIMALE_NOTTE_2025,
+        "plafond_mensile": rules.PLAFOND_MENSILE_2025,
+        "riferimento": rules.RIFERIMENTO_NORMATIVO_2025,
+    }
+    return render_template("normativa.html", rules=rules, rules_2026=rules_2026, rules_2025=rules_2025, categorie=rules.CATEGORIE)
 
 
 if __name__ == "__main__":
