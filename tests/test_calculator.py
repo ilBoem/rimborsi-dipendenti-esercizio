@@ -149,3 +149,26 @@ class TestCalcola:
         assert dettaglio["giorni_ammessi"] == 0
         assert esente == 0.0
         assert imponibile == 10.50
+
+    def test_caso_6_1_plafond_capiente(self):
+        # Caso 6.1: pasto 5gg 2026, importo=50, già=1350 → capienza=50, esente=50, imponibile=0
+        r = richiesta(categoria="pasto", giorni=5, importo=50.0)
+        esente, imponibile, _ = calculator.calcola(r, esente_gia_riconosciuta=1350.0)
+        assert esente == 50.0
+        assert imponibile == 0.0
+
+    def test_caso_6_1_plafond_parzialmente_incapiente(self):
+        # Caso 6.1 variante: già=1380 → capienza=20, esente=20, imponibile=30
+        r = richiesta(categoria="pasto", giorni=5, importo=50.0)
+        esente, imponibile, _ = calculator.calcola(r, esente_gia_riconosciuta=1380.0)
+        assert esente == 20.0
+        assert imponibile == 30.0
+
+    def test_caso_6_4_lavoro_agile_oltre_limite_mensile(self):
+        # Caso 6.4: 15gg richieste, 0 già → ammesse=12, massimale=42, esente=42, imponibile=10.50
+        r = richiesta(categoria="lavoro_agile", giorni=15, importo=52.50)
+        esente, imponibile, dettaglio = calculator.calcola(r, esente_gia_riconosciuta=0.0, giorni_la_gia_rimborsati=0)
+        assert dettaglio["giorni_ammessi"] == 12
+        assert dettaglio["massimale_teorico"] == 42.0
+        assert esente == 42.0
+        assert imponibile == 10.50
